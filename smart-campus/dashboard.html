@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CampusNav — University Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body class="wp-dash">
+  <!-- Sidebar -->
+  <aside class="wp-sidebar">
+    <div class="wp-sidebar__brand">
+      <i data-lucide="compass"></i>
+      <span>CampusNav</span>
+    </div>
+    <ul class="wp-menu">
+      <li class="wp-menu__group">Main</li>
+      <li class="wp-menu__item wp-menu__item--active" data-section="overview">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+      </li>
+      <li class="wp-menu__item" data-section="faculty">
+        <i data-lucide="graduation-cap"></i> <span>Faculty</span>
+        <span class="wp-badge">8</span>
+      </li>
+      <li class="wp-menu__item" data-section="hod">
+        <i data-lucide="award"></i> <span>HOD Desk</span>
+        <span class="wp-badge wp-badge--red">2</span>
+      </li>
+      <li class="wp-menu__item" data-section="warden">
+        <i data-lucide="key"></i> <span>Warden Control</span>
+      </li>
+      
+      <li class="wp-menu__group">Campus Ops</li>
+      <li class="wp-menu__item" data-section="students">
+        <i data-lucide="users"></i> <span>Student Reps</span>
+      </li>
+      <li class="wp-menu__item" data-section="security">
+        <i data-lucide="shield-check"></i> <span>Safety & Security</span>
+      </li>
+      <li class="wp-menu__item" data-section="admin">
+        <i data-lucide="settings"></i> <span>Administration</span>
+      </li>
+
+      <li class="wp-menu__group" style="margin-top: auto;">System</li>
+      <li>
+        <a href="index.html" class="wp-menu__item wp-menu__item--map">
+          <i data-lucide="map"></i> <span>Live Campus Map</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Content -->
+  <main class="wp-main">
+    <header class="wp-topbar">
+      <div class="wp-topbar__search">
+        <i data-lucide="search"></i>
+        <input type="text" placeholder="Search people, office, contacts..." id="dashSearch" />
+      </div>
+      <div class="wp-topbar__actions">
+        <button class="wp-topbar__btn" title="Notifications">
+            <i data-lucide="bell"></i>
+            <span class="wp-dot"></span>
+        </button>
+        <div class="wp-user">
+            <span class="wp-user__name" id="userDisplayName">Prof. Gupta</span>
+            <div class="wp-user__avatar" id="userAvatar">G</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="wp-container">
+      <div class="wp-header">
+        <h1 id="dashTitle">Campus Overview</h1>
+        <div class="wp-header__tabs">
+            <button class="wp-tab wp-tab--active">All Staff</button>
+            <button class="wp-tab">Recently Active</button>
+            <button class="wp-tab">On Leave</button>
+            <button class="wp-tab">Favorites</button>
+        </div>
+      </div>
+
+      <div class="wp-grid" id="staffGrid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation Bridge Modal -->
+  <div class="wp-modal" id="navModal">
+    <div class="wp-modal__content">
+        <i data-lucide="navigation" class="wp-modal__icon"></i>
+        <h3>Initiating Navigation</h3>
+        <p>Redirecting to campus map to locate <strong id="navTargetName"></strong>...</p>
+        <div class="wp-loader"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

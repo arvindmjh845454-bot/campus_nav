@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>CampusNav — Smart Campus Navigation</title>
+  <meta name="description"
+    content="Intelligent campus navigation system with real-time occupancy, accessibility routes, and event-based location suggestions." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- App Styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="panels.css" />
+</head>
+
+<body>
+
+  <!-- =================== MAP CONTAINER =================== -->
+  <div id="map"></div>
+
+  <!-- =================== TOP OVERLAY =================== -->
+  <header class="top-bar">
+    <div class="top-bar__left">
+      <button class="icon-btn" id="menuBtn" aria-label="Menu">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
+    <div class="top-bar__search" id="searchContainer">
+      <i data-lucide="search" class="search-icon"></i>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search classrooms, labs, facilities…"
+        autocomplete="off" />
+      <button class="icon-btn icon-btn--small" id="voiceBtn" aria-label="Voice search">
+        <i data-lucide="mic"></i>
+      </button>
+    </div>
+    <div class="top-bar__right">
+      <a href="dashboard.html" class="icon-btn" id="dashboardLink" aria-label="Dashboard" title="University Dashboard">
+        <i data-lucide="layout-dashboard"></i>
+      </a>
+      <button class="icon-btn" id="notificationBtn" aria-label="Notifications" title="Recent Alerts">
+        <i data-lucide="bell"></i>
+        <span class="notification-dot"></span>
+      </button>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+        <i data-lucide="sun"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Notification Panel -->
+  <div class="notification-panel" id="notificationPanel">
+    <div class="notification-panel__header">
+      <h3>Notifications</h3>
+      <button class="icon-btn icon-btn--small" id="closeNotifications"><i data-lucide="x"></i></button>
+    </div>
+    <ul class="notification-list" id="notificationList">
+      <li class="notification-item">
+        <i data-lucide="info"></i>
+        <div>
+          <p><strong>Welcome back!</strong></p>
+          <p class="text-xs">Explore the new realistic map graphics.</p>
+        </div>
+      </li>
+      <li class="notification-item">
+        <i data-lucide="zap"></i>
+        <div>
+          <p><strong>Occupancy Update</strong></p>
+          <p class="text-xs">LHC is currently at 85% capacity.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- =================== QUICK FILTERS =================== -->
+  <div class="quick-filters" id="quickFilters">
+    <button class="filter-chip filter-chip--active" data-filter="all">
+      <i data-lucide="layers"></i> All
+    </button>
+    <button class="filter-chip" data-filter="classroom">
+      <i data-lucide="book-open"></i> Classrooms
+    </button>
+    <button class="filter-chip" data-filter="lab">
+      <i data-lucide="flask-conical"></i> Labs
+    </button>
+    <button class="filter-chip" data-filter="library">
+      <i data-lucide="library"></i> Library
+    </button>
+    <button class="filter-chip" data-filter="cafeteria">
+      <i data-lucide="coffee"></i> Cafeteria
+    </button>
+    <button class="filter-chip" data-filter="admin">
+      <i data-lucide="building-2"></i> Admin
+    </button>
+    <button class="filter-chip" data-filter="restroom">
+      <i data-lucide="bath"></i> Restrooms
+    </button>
+  </div>
+
+  <!-- =================== GPS TOGGLE =================== -->
+  <button class="fab-btn" id="gpsBtn" aria-label="Locate Me" style="position: fixed; right: 16px; bottom: 390px; z-index: 998; width: 44px; height: 44px;">
+    <i data-lucide="crosshair"></i>
+  </button>
+
+  <!-- =================== ACCESSIBILITY TOGGLE =================== -->
+  <div class="accessibility-fab" id="accessibilityFab">
+    <button class="fab-btn" id="accessibilityBtn" aria-label="Accessibility options">
+      <i data-lucide="accessibility"></i>
+    </button>
+    <div class="fab-menu" id="accessibilityMenu">
+      <label class="fab-option">
+        <input type="checkbox" id="wheelchairToggle" />
+        <span><i data-lucide="armchair"></i> Wheelchair Route</span>
+      </label>
+      <label class="fab-option">
+        <input type="checkbox" id="sensoryToggle" />
+        <span><i data-lucide="ear-off"></i> Sensory-Friendly</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- =================== EVENT SUGGESTIONS =================== -->
+  <div class="event-banner" id="eventBanner">
+    <div class="event-banner__icon">
+      <i data-lucide="bell-ring"></i>
+    </div>
+    <div class="event-banner__content">
+      <p class="event-banner__title" id="eventTitle">Physics 101 in 15 min</p>
+      <p class="event-banner__sub" id="eventSub">Tap for directions to Science Block, Room 204</p>
+    </div>
+    <button class="event-banner__action" id="eventAction">
+      <i data-lucide="navigation"></i> Go
+    </button>
+    <button class="event-banner__close" id="eventClose" aria-label="Dismiss">
+      <i data-lucide="x"></i>
+    </button>
+  </div>
+
+  <!-- =================== BOTTOM SHEET =================== -->
+  <div class="bottom-sheet" id="bottomSheet">
+    <div class="bottom-sheet__handle" id="sheetHandle">
+      <span class="handle-bar"></span>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="sheet-tabs">
+      <button class="sheet-tab sheet-tab--active" data-tab="explore">
+        <i data-lucide="compass"></i>
+        <span>Explore</span>
+      </button>
+      <button class="sheet-tab" data-tab="navigate">
+        <i data-lucide="route"></i>
+        <span>Navigate</span>
+      </button>
+      <button class="sheet-tab" data-tab="events">
+        <i data-lucide="calendar"></i>
+        <span>Events</span>
+      </button>
+    </div>
+
+    <!-- ===== EXPLORE TAB ===== -->
+    <div class="sheet-content" id="exploreTab">
+      <!-- Campus Overview -->
+      <h2 class="sheet-heading">Campus Overview</h2>
+      <div class="campus-overview">
+         <div class="overview-stat"><i data-lucide="building"></i> <span>25+ Depts</span></div>
+         <div class="overview-stat"><i data-lucide="home"></i> <span>15+ Hostels</span></div>
+         <div class="overview-stat"><i data-lucide="dumbbell"></i> <span>5+ Sports</span></div>
+         <div class="overview-stat"><i data-lucide="coffee"></i> <span>20+ Eateries</span></div>
+      </div>
+      
+      <!-- 3-Step Guide -->
+      <div class="campus-guide">
+         <h3 class="guide-title">Explore Campus in 3 Steps</h3>
+         <div class="guide-steps">
+            <div class="guide-step">
+                <div class="step-circle">1</div>
+                <p>Search a place</p>
+            </div>
+            <i class="step-arrow" data-lucide="arrow-right"></i>
+            <div class="guide-step">
+                <div class="step-circle">2</div>
+                <p>Click on building</p>
+            </div>
+            <i class="step-arrow" data-lucide="arrow-right"></i>
+            <div class="guide-step">
+                <div class="step-circle">3</div>
+                <p>Get directions</p>
+            </div>
+         </div>
+      </div>
+
+      <h2 class="sheet-heading" style="margin-top: 1.5rem;">Categories</h2>
+      <div class="place-grid" id="placeGrid"></div>
+      <h2 class="sheet-heading" style="margin-top: 1.5rem;">Live Occupancy</h2>
+      <div class="occupancy-list" id="occupancyList"></div>
+    </div>
+
+    <!-- ===== NAVIGATE TAB ===== -->
+    <div class="sheet-content sheet-content--hidden" id="navigateTab">
+      <h2 class="sheet-heading">Route Details</h2>
+      <div class="route-info" id="routeInfo">
+        <p class="route-info__placeholder">Search for a destination or tap a place to start navigating.</p>
+      </div>
+      <div class="route-steps" id="routeSteps"></div>
+    </div>
+
+    <!-- ===== EVENTS TAB ===== -->
+    <div class="sheet-content sheet-content--hidden" id="eventsTab">
+      <h2 class="sheet-heading">Today's Schedule</h2>
+      <div class="event-list" id="eventList"></div>
+      <h2 class="sheet-heading" style="margin-top: 1.2rem;">Suggestions For You</h2>
+      <div class="suggestion-list" id="suggestionList"></div>
+    </div>
+  </div>
+
+  <!-- =================== SIDE MENU =================== -->
+  <div class="side-menu-overlay" id="sideMenuOverlay"></div>
+  <nav class="side-menu" id="sideMenu">
+    <div class="side-menu__header">
+      <div class="side-menu__logo">
+        <i data-lucide="compass"></i>
+        <span>CampusNav</span>
+      </div>
+      <button class="icon-btn" id="closeMenuBtn" aria-label="Close menu">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="side-menu__list-group">
+      <h3 class="side-menu__label">Explore Campus</h3>
+      <ul class="side-menu__list">
+        <li><button class="side-menu__item" data-panel="buildingCategories"><i data-lucide="grid"></i> All Categories</button></li>
+        <li><button class="side-menu__item" data-panel="peopleDirectory"><i data-lucide="users"></i> People Directory</button></li>
+        <li><button class="side-menu__item" data-panel="campusEvents"><i data-lucide="megaphone"></i> Campus Events</button></li>
+      </ul>
+    </div>
+    <div class="side-menu__list-group" id="personalMenuGroup">
+      <h3 class="side-menu__label">Personal</h3>
+      <ul class="side-menu__list">
+        <li><button class="side-menu__item" data-panel="savedPlaces"><i data-lucide="map-pin"></i> Saved Places</button></li>
+        <li><button class="side-menu__item" data-panel="recentRoutes"><i data-lucide="clock"></i> Recent Routes</button></li>
+        <li><button class="side-menu__item" data-panel="mySchedule"><i data-lucide="calendar-days"></i> My Schedule</button></li>
+      </ul>
+    </div>
+    <div class="side-menu__list-group">
+      <h3 class="side-menu__label">Help & Settings</h3>
+      <ul class="side-menu__list">
+        <li><button class="side-menu__item" data-panel="accessibility"><i data-lucide="accessibility"></i> Accessibility</button></li>
+        <li><button class="side-menu__item" data-panel="emergencySafety"><i data-lucide="shield-alert"></i> Emergency & Safety</button></li>
+        <li><button class="side-menu__item" data-panel="settings"><i data-lucide="settings"></i> Settings</button></li>
+        <li><button class="side-menu__item" data-panel="helpFeedback"><i data-lucide="help-circle"></i> Help & Feedback</button></li>
+      </ul>
+    </div>
+    <div class="side-menu__footer">
+      <p>CampusNav v1.0</p>
+      <p>© 2026 Smart Campus Project</p>
+    </div>
+  </nav>
+
+  <!-- =================== FULL-SCREEN PANELS =================== -->
+
+  <!-- ===== SAVED PLACES ===== -->
+  <div class="panel" id="panelSavedPlaces">
+    <div class="panel__header">
+      <button class="panel__back" id="backSavedPlaces" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Saved Places</h2>
+      <button class="panel__action" id="addSavedPlace" aria-label="Add place"><i data-lucide="plus"></i></button>
+    </div>
+    <div class="panel__body">
+      <div class="panel__empty" id="savedPlacesEmpty">
+        <i data-lucide="bookmark" class="panel__empty-icon"></i>
+        <p class="panel__empty-title">No saved places yet</p>
+        <p class="panel__empty-sub">Tap the + button or save a place from the map to see it here.</p>
+      </div>
+      <div class="saved-list" id="savedPlacesList"></div>
+    </div>
+
+    <!-- Add Place Modal -->
+    <div class="modal-overlay" id="addPlaceModal">
+      <div class="modal">
+        <h3 class="modal__title">Save a Place</h3>
+        <p class="modal__sub">Choose a location to add to your saved places.</p>
+        <div class="modal__list" id="addPlaceList"></div>
+        <div class="modal__actions">
+          <button class="modal__btn modal__btn--secondary" id="cancelAddPlace">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RECENT ROUTES ===== -->
+  <div class="panel" id="panelRecentRoutes">
+    <div class="panel__header">
+      <button class="panel__back" id="backRecentRoutes" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Recent Routes</h2>
+      <button class="panel__action" id="clearRecentRoutes" aria-label="Clear all"><i data-lucide="trash-2"></i></button>
+    </div>
+    <div class="panel__body">
+      <div class="panel__empty" id="recentRoutesEmpty">
+        <i data-lucide="route" class="panel__empty-icon"></i>
+        <p class="panel__empty-title">No recent routes</p>
+        <p class="panel__empty-sub">Navigate to a place and your route history will appear here.</p>
+      </div>
+      <div class="recent-list" id="recentRoutesList"></div>
+    </div>
+  </div>
+
+  <!-- ===== MY SCHEDULE ===== -->
+  <div class="panel" id="panelMySchedule">
+    <div class="panel__header">
+      <button class="panel__back" id="backMySchedule" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">My Schedule</h2>
+      <button class="panel__action" id="addScheduleEvent" aria-label="Add event"><i data-lucide="plus"></i></button>
+    </div>
+    <div class="panel__body">
+      <!-- Day Selector -->
+      <div class="day-selector" id="daySelector">
+        <button class="day-btn day-btn--active" data-day="mon">Mon</button>
+        <button class="day-btn" data-day="tue">Tue</button>
+        <button class="day-btn" data-day="wed">Wed</button>
+        <button class="day-btn" data-day="thu">Thu</button>
+        <button class="day-btn" data-day="fri">Fri</button>
+        <button class="day-btn" data-day="sat">Sat</button>
+      </div>
+      <div class="schedule-timeline" id="scheduleTimeline"></div>
+    </div>
+
+    <!-- Add Schedule Event Modal -->
+    <div class="modal-overlay" id="addScheduleModal">
+      <div class="modal">
+        <h3 class="modal__title">Add Class / Event</h3>
+        <div class="modal__form">
+          <div class="form-group">
+            <label class="form-label">Event Name</label>
+            <input type="text" class="form-input" id="scheduleEventName" placeholder="e.g. Physics 101" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Start Time</label>
+              <input type="time" class="form-input" id="scheduleStartTime" value="09:00" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">End Time</label>
+              <input type="time" class="form-input" id="scheduleEndTime" value="10:00" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <select class="form-input" id="scheduleLocation">
+              <!-- populated by JS -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Day</label>
+            <select class="form-input" id="scheduleDay">
+              <option value="mon">Monday</option>
+              <option value="tue">Tuesday</option>
+              <option value="wed">Wednesday</option>
+              <option value="thu">Thursday</option>
+              <option value="fri">Friday</option>
+              <option value="sat">Saturday</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal__actions">
+          <button class="modal__btn modal__btn--secondary" id="cancelAddSchedule">Cancel</button>
+          <button class="modal__btn modal__btn--primary" id="confirmAddSchedule">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ACCESSIBILITY ===== -->
+  <div class="panel" id="panelAccessibility">
+    <div class="panel__header">
+      <button class="panel__back" id="backAccessibility" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Accessibility</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="settings-section">
+        <h3 class="settings-section__title">Route Preferences</h3>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="armchair"></i>
+            <div>
+              <p class="toggle-row__label">Wheelchair-Accessible Routes</p>
+              <p class="toggle-row__desc">Prioritize elevators & ramps, avoid stairs</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="accWheelchair" />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="ear-off"></i>
+            <div>
+              <p class="toggle-row__label">Sensory-Friendly Routes</p>
+              <p class="toggle-row__desc">Avoid high-noise & high-traffic corridors</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="accSensory" />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="eye"></i>
+            <div>
+              <p class="toggle-row__label">High-Contrast Mode</p>
+              <p class="toggle-row__desc">Increase visual contrast across the app</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="accContrast" />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="type"></i>
+            <div>
+              <p class="toggle-row__label">Large Text</p>
+              <p class="toggle-row__desc">Increase font sizes throughout the app</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="accLargeText" />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Accessible Facilities</h3>
+        <div class="acc-facilities" id="accFacilities"></div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Feedback</h3>
+        <div class="info-card">
+          <i data-lucide="message-circle"></i>
+          <div>
+            <p class="info-card__title">Report an accessibility issue</p>
+            <p class="info-card__desc">Let us know if a ramp, elevator, or accessible path is not working.</p>
+          </div>
+          <button class="info-card__btn" id="reportAccessibility">Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS ===== -->
+  <div class="panel" id="panelSettings">
+    <div class="panel__header">
+      <button class="panel__back" id="backSettings" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Settings</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="settings-section">
+        <h3 class="settings-section__title">Appearance</h3>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="moon"></i>
+            <div>
+              <p class="toggle-row__label">Dark Mode</p>
+              <p class="toggle-row__desc">Switch between light and dark themes</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="settingDarkMode" checked />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="sparkles"></i>
+            <div>
+              <p class="toggle-row__label">Animations</p>
+              <p class="toggle-row__desc">Enable smooth micro-animations</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="settingAnimations" checked />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Navigation</h3>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="bell"></i>
+            <div>
+              <p class="toggle-row__label">Event Notifications</p>
+              <p class="toggle-row__desc">Get alerts before your next class</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="settingNotifications" checked />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="gauge"></i>
+            <div>
+              <p class="toggle-row__label">Live Occupancy Updates</p>
+              <p class="toggle-row__desc">Real-time crowd data for campus spaces</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="settingOccupancy" checked />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="setting-select-row">
+          <div class="toggle-row__info">
+            <i data-lucide="map"></i>
+            <div>
+              <p class="toggle-row__label">Map Style</p>
+              <p class="toggle-row__desc">Choose the map tile appearance</p>
+            </div>
+          </div>
+          <select class="form-input form-input--compact" id="settingMapStyle">
+            <option value="default">Default</option>
+            <option value="satellite">Satellite</option>
+            <option value="terrain">Terrain</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Data & Privacy</h3>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="database"></i>
+            <div>
+              <p class="toggle-row__label">Save Route History</p>
+              <p class="toggle-row__desc">Store navigated routes locally</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="settingRouteHistory" checked />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <button class="danger-btn" id="clearAllData">
+          <i data-lucide="trash-2"></i> Clear All Data
+        </button>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">About</h3>
+        <div class="about-info">
+          <p><strong>CampusNav</strong> v1.0.0</p>
+          <p>Smart Campus Navigation System</p>
+          <p class="text-muted">Built with Leaflet · OpenStreetMap · Lucide Icons</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HELP & FEEDBACK ===== -->
+  <div class="panel" id="panelHelpFeedback">
+    <div class="panel__header">
+      <button class="panel__back" id="backHelpFeedback" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Help & Feedback</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="settings-section">
+        <h3 class="settings-section__title">Frequently Asked Questions</h3>
+        <div class="faq-list" id="faqList"></div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Quick Help</h3>
+        <div class="help-grid">
+          <div class="help-card">
+            <i data-lucide="search"></i>
+            <h4>Search</h4>
+            <p>Type building names, room numbers, or facility types in the search bar.</p>
+          </div>
+          <div class="help-card">
+            <i data-lucide="navigation"></i>
+            <h4>Navigate</h4>
+            <p>Tap any marker on the map and press "Navigate Here" for directions.</p>
+          </div>
+          <div class="help-card">
+            <i data-lucide="filter"></i>
+            <h4>Filter</h4>
+            <p>Use the chips below the search bar to filter by location type.</p>
+          </div>
+          <div class="help-card">
+            <i data-lucide="accessibility"></i>
+            <h4>Accessibility</h4>
+            <p>Tap the accessibility button to enable wheelchair or sensory-friendly routes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Send Feedback</h3>
+        <div class="feedback-form">
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input" id="feedbackCategory">
+              <option value="bug">Bug Report</option>
+              <option value="feature">Feature Request</option>
+              <option value="accessibility">Accessibility Issue</option>
+              <option value="map">Map / Data Error</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Your Feedback</label>
+            <textarea class="form-textarea" id="feedbackText" rows="4"
+              placeholder="Describe your issue or suggestion…"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email (optional)</label>
+            <input type="email" class="form-input" id="feedbackEmail" placeholder="you@university.edu" />
+          </div>
+          <button class="submit-btn" id="submitFeedback">
+            <i data-lucide="send"></i> Submit Feedback
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3 class="settings-section__title">Contact</h3>
+        <div class="contact-list">
+          <div class="contact-item">
+            <i data-lucide="mail"></i>
+            <div>
+              <p class="contact-item__label">Email Support</p>
+              <p class="contact-item__value">support@campusnav.edu</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i data-lucide="phone"></i>
+            <div>
+              <p class="contact-item__label">IT Help Desk</p>
+              <p class="contact-item__value">+91 1234-567890</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i data-lucide="globe"></i>
+            <div>
+              <p class="contact-item__label">Documentation</p>
+              <p class="contact-item__value">docs.campusnav.edu</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PEOPLE DIRECTORY ===== -->
+  <div class="panel" id="panelPeopleDirectory">
+    <div class="panel__header">
+      <button class="panel__back" id="backPeopleDirectory" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">People Directory</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="panel-search">
+        <i data-lucide="search"></i>
+        <input type="text" id="peoplePanelSearch" placeholder="Search by name, role, or dept…" />
+      </div>
+      <div class="people-list" id="peoplePanelList"></div>
+    </div>
+  </div>
+
+  <!-- ===== BUILDING CATEGORIES ===== -->
+  <div class="panel" id="panelBuildingCategories">
+    <div class="panel__header">
+      <button class="panel__back" id="backBuildingCategories" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Building Categories</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="category-grid-full" id="categoryPanelGrid"></div>
+      <div class="location-list-full" id="categoryLocationList"></div>
+    </div>
+  </div>
+
+  <!-- ===== CAMPUS EVENTS ===== -->
+  <div class="panel" id="panelCampusEvents">
+    <div class="panel__header">
+      <button class="panel__back" id="backCampusEvents" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Campus Events</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="events-timeline" id="campusEventsTimeline"></div>
+    </div>
+  </div>
+
+  <!-- ===== EMERGENCY & SAFETY ===== -->
+  <div class="panel" id="panelEmergencySafety">
+    <div class="panel__header">
+      <button class="panel__back" id="backEmergencySafety" aria-label="Back"><i data-lucide="arrow-left"></i></button>
+      <h2 class="panel__title">Emergency & Safety</h2>
+      <span></span>
+    </div>
+    <div class="panel__body">
+      <div class="emergency-guide">
+        <h3 class="emergency-title">Emergency Contacts</h3>
+        <div class="emergency-grid">
+          <a href="tel:911" class="emergency-btn emergency-btn--red">
+            <i data-lucide="phone-call"></i>
+            <span>Campus Police (911)</span>
+          </a>
+          <a href="tel:102" class="emergency-btn">
+            <i data-lucide="ambulance"></i>
+            <span>Medical Emergency</span>
+          </a>
+          <a href="tel:101" class="emergency-btn">
+            <i data-lucide="flame"></i>
+            <span>Fire Department</span>
+          </a>
+        </div>
+        <h3 class="emergency-title" style="margin-top: 1.5rem;">Safety Features</h3>
+        <div class="toggle-row">
+          <div class="toggle-row__info">
+            <i data-lucide="navigation"></i>
+            <div>
+              <p class="toggle-row__label">Share Life Location</p>
+              <p class="toggle-row__desc">Share your location with campus security</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="safetyShareLocation" />
+            <span class="switch__slider"></span>
+          </label>
+        </div>
+        <div class="info-card info-card--blue">
+          <i data-lucide="info"></i>
+          <div>
+            <p class="info-card__title">Safe Walk Program</p>
+            <p class="info-card__desc">Request a security escort for late-night walks across campus.</p>
+          </div>
+          <button class="info-card__btn">Request</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =================== TOAST NOTIFICATION =================== -->
+  <div class="toast" id="toast">
+    <i data-lucide="check-circle" class="toast__icon"></i>
+    <span class="toast__message" id="toastMessage"></span>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- App Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

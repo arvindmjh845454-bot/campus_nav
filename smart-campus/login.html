@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusNav — Login</title>
+    <meta name="description" content="Login to CampusNav Smart Campus Navigation System" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="login.css" />
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-orb bg-orb--1"></div>
+        <div class="bg-orb bg-orb--2"></div>
+        <div class="bg-orb bg-orb--3"></div>
+    </div>
+
+    <main class="login-container">
+        <!-- Logo -->
+        <div class="login-logo">
+            <div class="login-logo__icon">
+                <i data-lucide="compass"></i>
+            </div>
+            <h1 class="login-logo__title">CampusNav</h1>
+            <p class="login-logo__sub">Smart Campus Navigation System</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <h2 class="login-card__heading">Welcome Back</h2>
+            <p class="login-card__sub">Sign in to access your campus dashboard</p>
+
+            <form id="loginForm" class="login-form" autocomplete="off">
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        <i data-lucide="user"></i> Username
+                    </label>
+                    <input type="text" id="username" class="form-input" placeholder="Enter your username" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        <i data-lucide="lock"></i> Password
+                    </label>
+                    <div class="password-wrap">
+                        <input type="password" id="password" class="form-input" placeholder="Enter your password"
+                            required />
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe" />
+                        <span class="checkmark"></span>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="login-btn__text">Sign In</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+
+                <div class="login-error" id="loginError">
+                    <i data-lucide="alert-circle"></i>
+                    <span id="errorMessage">Invalid username or password</span>
+                </div>
+            </form>
+
+            <div class="login-divider">
+                <span>or continue with</span>
+            </div>
+
+            <div class="social-btns" style="flex-direction: column; gap: 12px;">
+                <button class="social-btn" id="guestBtn"><i data-lucide="user"></i> Continue as Guest</button>
+            </div>
+
+            <p class="register-hint">New to CampusNav? <a href="#" id="openRegister">Create account</a></p>
+        </div>
+
+        <!-- Credentials Hint -->
+        <div class="credentials-hint">
+            <i data-lucide="info"></i>
+            <span>Demo: <strong>faculty / faculty123</strong> | <strong>hod / hod123</strong></span>
+        </div>
+    </main>
+
+    <!-- Registration Modal -->
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal modal--large">
+            <h3 class="modal__title">Create Account</h3>
+            <p class="modal__sub">Enter your details to register on CampusNav.</p>
+            <div class="modal__form">
+                <div class="form-row" style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="regName" placeholder="John Doe" />
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">University ID</label>
+                        <input type="text" class="form-input" id="regID" placeholder="ID240XXX" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Register As</label>
+                    <div class="role-selector">
+                        <label class="role-option">
+                            <input type="radio" name="role" value="faculty" checked>
+                            <div class="role-card">
+                                <i data-lucide="graduation-cap"></i>
+                                <span>Faculty</span>
+                            </div>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="hod">
+                            <div class="role-card">
+                                <i data-lucide="briefcase"></i>
+                                <span>HOD</span>
+                            </div>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="guest">
+                            <div class="role-card">
+                                <i data-lucide="user"></i>
+                                <span>Guest</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="regEmail" placeholder="you@university.edu" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="regPassword" placeholder="Minimum 8 characters" />
+                </div>
+            </div>
+            <div class="modal__actions">
+                <button class="modal-btn-secondary" id="closeRegister">Cancel</button>
+                <button class="modal-btn-primary" id="btnRegister">Create Account</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal">
+            <h3 class="modal__title">Reset Password</h3>
+            <p class="modal__sub">Enter your university email to receive a reset link.</p>
+            <div class="modal__form">
+                <div class="form-group">
+                    <label class="form-label">University Email</label>
+                    <input type="email" class="form-input" id="forgotEmail" placeholder="you@university.edu" />
+                </div>
+            </div>
+            <div class="modal__actions">
+                <button class="modal-btn-secondary" id="closeForgot">Cancel</button>
+                <button class="modal-btn-primary" id="btnReset">Send Reset Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="success-icon"><i data-lucide="check-circle"></i></div>
+            <h3 class="modal__title">Check Your Email</h3>
+            <p class="modal__sub">A password reset link has been sent to your university email address.</p>
+            <div class="modal__actions">
+                <button class="modal-btn-primary" id="closeSuccess">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const form = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('passwordToggle');
+        const loginError = document.getElementById('loginError');
+        const loginBtn = document.getElementById('loginBtn');
+        const guestBtn = document.getElementById('guestBtn');
+        const rememberMe = document.getElementById('rememberMe');
+        const forgotLink = document.querySelector('.forgot-link');
+        const forgotModal = document.getElementById('forgotModal');
+        const successModal = document.getElementById('successModal');
+        const closeForgot = document.getElementById('closeForgot');
+        const btnReset = document.getElementById('btnReset');
+        const closeSuccess = document.getElementById('closeSuccess');
+        const openRegister = document.getElementById('openRegister');
+        const registerModal = document.getElementById('registerModal');
+        const closeRegister = document.getElementById('closeRegister');
+        const btnRegisterSubmit = document.getElementById('btnRegister');
+
+        // Check if already logged in
+        if (sessionStorage.getItem('cn_session') || localStorage.getItem('cn_remember')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        // Pre-fill if remembered
+        const remembered = localStorage.getItem('cn_remember');
+        if (remembered) {
+            const data = JSON.parse(remembered);
+            usernameInput.value = data.username;
+            rememberMe.checked = true;
+        }
+
+        // Password visibility toggle
+        passwordToggle.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordToggle.innerHTML = isPassword ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+            lucide.createIcons();
+        });
+
+        // Forgot Password Flow
+        forgotLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotModal.classList.add('active');
+        });
+
+        closeForgot.addEventListener('click', () => forgotModal.classList.remove('active'));
+
+        btnReset.addEventListener('click', () => {
+            const email = document.getElementById('forgotEmail').value;
+            if (email && email.includes('@')) {
+                btnReset.innerHTML = '<span class="loader"></span>';
+                setTimeout(() => {
+                    forgotModal.classList.remove('active');
+                    successModal.classList.add('active');
+                    btnReset.innerText = 'Send Reset Link';
+                }, 1500);
+            }
+        });
+
+        closeSuccess.addEventListener('click', () => successModal.classList.remove('active'));
+
+        // Register Flow
+        openRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerModal.classList.add('active');
+        });
+
+        closeRegister.addEventListener('click', () => registerModal.classList.remove('active'));
+
+        btnRegisterSubmit.addEventListener('click', () => {
+            const name = document.getElementById('regName').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+            if (name) {
+                btnRegisterSubmit.innerHTML = '<span class="loader"></span>';
+                setTimeout(() => {
+                    registerModal.classList.remove('active');
+                    sessionStorage.setItem('cn_session', JSON.stringify({ 
+                        username: name.split(' ')[0], 
+                        name: name, 
+                        role: role,
+                        loginTime: Date.now() 
+                    }));
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }
+        });
+
+        // Guest Login Flow
+        guestBtn.addEventListener('click', () => {
+             // Animate button
+             guestBtn.innerHTML = '<span class="loader" style="width: 16px; height: 16px; border-width: 2px; display: inline-block;"></span>';
+             
+             setTimeout(() => {
+                const session = { username: 'Guest', name: 'Guest User', role: 'guest', loginTime: Date.now() };
+                sessionStorage.setItem('cn_session', JSON.stringify(session));
+                window.location.href = 'index.html'; // Guests go straight to Map
+             }, 800);
+        });
+
+        // Campus Member Login Flow
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                loginError.querySelector('span').textContent = 'Please enter both username and password';
+                loginError.classList.add('active');
+                return;
+            }
+
+            // Animate button
+            loginBtn.classList.add('loading');
+            const originalContent = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<span class="loader"></span>';
+            loginError.classList.remove('active');
+
+            setTimeout(() => {
+                // Demo logic: faculty, hod, or guest
+                let role = 'member';
+                if (username.toLowerCase() === 'faculty') role = 'faculty';
+                if (username.toLowerCase() === 'hod') role = 'hod';
+                
+                const session = { 
+                    username: username, 
+                    name: username.charAt(0).toUpperCase() + username.slice(1), 
+                    role: role, 
+                    loginTime: Date.now() 
+                };
+                sessionStorage.setItem('cn_session', JSON.stringify(session));
+
+                if (rememberMe.checked) {
+                    localStorage.setItem('cn_remember', JSON.stringify({ username: username }));
+                } else {
+                    localStorage.removeItem('cn_remember');
+                }
+
+                loginBtn.innerHTML = '<i data-lucide="check"></i> <span>Success!</span>';
+                loginBtn.classList.remove('loading');
+                loginBtn.style.background = 'var(--clr-accent)';
+                lucide.createIcons();
+
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 600);
+            }, 800);
+        });
+    </script>
+</body>
+
+</html>
