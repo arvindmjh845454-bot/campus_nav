@@ -614,7 +614,35 @@
 
         // Notification Toggle & Logic
         const nBtn = $('#notificationBtn'), nPanel = $('#notificationPanel'), 
-              nClose = $('#closeNotifications'), nDot = $('.notification-dot');
+              nClose = $('#closeNotifications'), nDot = $('.notification-dot'),
+              nList = $('#notificationList'), nClear = $('#clearNotifications');
+
+        let notifications = [...MOCK_NOTIFICATIONS];
+
+        function renderNotifications() {
+            if (!nList) return;
+            if (notifications.length === 0) {
+                nList.innerHTML = `<div class="panel__empty" style="padding: 2rem; text-align: center;">
+                    <i data-lucide="bell-off" style="width: 32px; height: 32px; color: var(--text-secondary); margin-bottom: 8px;"></i>
+                    <p class="text-xs" style="color: var(--text-secondary);">All caught up!</p>
+                </div>`;
+                if (nDot) nDot.style.display = 'none';
+                lucide.createIcons();
+                return;
+            }
+            
+            nList.innerHTML = notifications.map(n => `
+                <li class="notification-item" data-id="${n.id}">
+                    <i data-lucide="${n.icon}"></i>
+                    <div>
+                        <p><strong>${n.title}</strong></p>
+                        <p class="text-xs">${n.desc}</p>
+                        <span class="text-xs" style="opacity: 0.6; margin-top: 4px; display: block;">${n.time}</span>
+                    </div>
+                </li>
+            `).join('');
+            lucide.createIcons();
+        }
 
         if (nBtn && nPanel) {
             nBtn.addEventListener('click', (e) => {
@@ -624,11 +652,22 @@
                 // Toggle panel
                 nPanel.classList.toggle('active');
                 
-                // If opening, hide the dot
-                if (!isOpen && nDot) {
-                    nDot.style.opacity = '0';
-                    nDot.style.pointerEvents = 'none';
+                // If opening, render and hide the dot
+                if (!isOpen) {
+                    renderNotifications();
+                    if (nDot) {
+                        nDot.style.opacity = '0';
+                        nDot.style.pointerEvents = 'none';
+                    }
                 }
+            });
+        }
+
+        if (nClear) {
+            nClear.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifications = [];
+                renderNotifications();
             });
         }
 

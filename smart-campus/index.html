@@ -60,26 +60,16 @@
   </header>
 
   <!-- Notification Panel -->
-  <div class="notification-panel" id="notificationPanel">
+    <div class="notification-panel" id="notificationPanel">
     <div class="notification-panel__header">
       <h3>Notifications</h3>
-      <button class="icon-btn icon-btn--small" id="closeNotifications"><i data-lucide="x"></i></button>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="text-btn text-xs" id="clearNotifications" style="color: var(--text-secondary); background: none; border: none; cursor: pointer;">Clear All</button>
+        <button class="icon-btn icon-btn--small" id="closeNotifications"><i data-lucide="x"></i></button>
+      </div>
     </div>
     <ul class="notification-list" id="notificationList">
-      <li class="notification-item">
-        <i data-lucide="info"></i>
-        <div>
-          <p><strong>Welcome back!</strong></p>
-          <p class="text-xs">Explore the new realistic map graphics.</p>
-        </div>
-      </li>
-      <li class="notification-item">
-        <i data-lucide="zap"></i>
-        <div>
-          <p><strong>Occupancy Update</strong></p>
-          <p class="text-xs">LHC is currently at 85% capacity.</p>
-        </div>
-      </li>
+      <!-- Dynamic list -->
     </ul>
   </div>
 

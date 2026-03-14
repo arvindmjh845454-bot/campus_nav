@@ -86,16 +86,16 @@ const MOCK_ROUTE_STEPS = [
 ];
 
 const PLACE_CATEGORIES = [
-  { type: 'department', label: 'Departments', icon: 'building', bg: 'linear-gradient(135deg, #0f4c81, #2f6696)' },
-  { type: 'hostel', label: 'Hostels', icon: 'home', bg: 'linear-gradient(135deg, #e09f3e, #e8b76c)' },
-  { type: 'hangout', label: 'Food & Hangouts', icon: 'coffee', bg: 'linear-gradient(135deg, #d4a373, #dec198)' },
-  { type: 'classroom', label: 'Classrooms', icon: 'book-open', bg: 'linear-gradient(135deg, #9b2226, #b24e52)' },
-  { type: 'library', label: 'Library', icon: 'library', bg: 'linear-gradient(135deg, #6c584c, #a98467)' },
-  { type: 'admin', label: 'Administration', icon: 'building-2', bg: 'linear-gradient(135deg, #582f0e, #7f4f24)' },
-  { type: 'sports', label: 'Sports', icon: 'dumbbell', bg: 'linear-gradient(135deg, #6a040f, #85182a)' },
-  { type: 'visitor', label: 'Visitor Guide', icon: 'map', bg: 'linear-gradient(135deg, #3e5c76, #537593)' },
-  { type: 'emergency', label: 'Emergency', icon: 'shield-alert', bg: 'linear-gradient(135deg, #d90429, #ef233c)' },
-  { type: 'restroom', label: 'Restrooms', icon: 'bath', bg: 'linear-gradient(135deg, #7b2cbf, #9d4edd)' }
+  { type: 'department', label: 'Departments', icon: 'building', bg: 'linear-gradient(135deg, #1e3a8a, #3b82f6)' },
+  { type: 'hostel', label: 'Hostels', icon: 'home', bg: 'linear-gradient(135deg, #92400e, #d97706)' },
+  { type: 'hangout', label: 'Food & Hangouts', icon: 'coffee', bg: 'linear-gradient(135deg, #78350f, #b45309)' },
+  { type: 'classroom', label: 'Classrooms', icon: 'book-open', bg: 'linear-gradient(135deg, #9b2226, #dc2626)' },
+  { type: 'library', label: 'Library', icon: 'library', bg: 'linear-gradient(135deg, #065f46, #10b981)' },
+  { type: 'admin', label: 'Administration', icon: 'building-2', bg: 'linear-gradient(135deg, #374151, #6b7280)' },
+  { type: 'sports', label: 'Sports', icon: 'dumbbell', bg: 'linear-gradient(135deg, #7f1d1d, #ef4444)' },
+  { type: 'visitor', label: 'Visitor Guide', icon: 'map', bg: 'linear-gradient(135deg, #1e40af, #60a5fa)' },
+  { type: 'emergency', label: 'Emergency', icon: 'shield-alert', bg: 'linear-gradient(135deg, #991b1b, #f87171)' },
+  { type: 'restroom', label: 'Restrooms', icon: 'bath', bg: 'linear-gradient(135deg, #5b21b6, #8b5cf6)' }
 ];
 
 const MARKER_STYLES = {
@@ -112,16 +112,16 @@ const MARKER_STYLES = {
 };
 
 const BG_MAP = {
-  department: 'linear-gradient(135deg, #0f4c81, #2f6696)',
-  hostel: 'linear-gradient(135deg, #e09f3e, #e8b76c)',
-  hangout: 'linear-gradient(135deg, #d4a373, #dec198)',
-  classroom: 'linear-gradient(135deg, #9b2226, #b24e52)',
-  library: 'linear-gradient(135deg, #6c584c, #a98467)',
-  admin: 'linear-gradient(135deg, #582f0e, #7f4f24)',
-  sports: 'linear-gradient(135deg, #6a040f, #85182a)',
-  visitor: 'linear-gradient(135deg, #3e5c76, #537593)',
-  emergency: 'linear-gradient(135deg, #d90429, #ef233c)',
-  restroom: 'linear-gradient(135deg, #7b2cbf, #9d4edd)'
+  department: 'linear-gradient(135deg, #1e3a8a, #3b82f6)',
+  hostel: 'linear-gradient(135deg, #92400e, #d97706)',
+  hangout: 'linear-gradient(135deg, #78350f, #b45309)',
+  classroom: 'linear-gradient(135deg, #9b2226, #dc2626)',
+  library: 'linear-gradient(135deg, #065f46, #10b981)',
+  admin: 'linear-gradient(135deg, #374151, #6b7280)',
+  sports: 'linear-gradient(135deg, #7f1d1d, #ef4444)',
+  visitor: 'linear-gradient(135deg, #1e40af, #60a5fa)',
+  emergency: 'linear-gradient(135deg, #991b1b, #f87171)',
+  restroom: 'linear-gradient(135deg, #5b21b6, #8b5cf6)'
 };
 
 // ─── Schedule Data (per day) ───
@@ -171,4 +171,11 @@ const IMPORTANT_ROUTES = [
   { id: 'route-lib-hostel', name: 'Library to Boys Hostels', from: 'central-lib', to: 'hostel-boys-1', duration: '12 mins', distance: '1.2km', type: 'walking' },
   { id: 'route-lhc-sac', name: 'LHC to Food Court (SAC)', from: 'lh-complex', to: 'sac-food', duration: '7 mins', distance: '600m', type: 'walking' },
   { id: 'route-admin-hospital', name: 'Admin Block to Hospital', from: 'main-bldg', to: 'hospital', duration: '8 mins', distance: '700m', type: 'walking' }
+];
+
+const MOCK_NOTIFICATIONS = [
+  { id: 'n1', title: 'Welcome back!', desc: 'Explore the new realistic map graphics.', icon: 'info', type: 'info', time: 'Just now' },
+  { id: 'n2', title: 'Occupancy Update', desc: 'LHC is currently at 85% capacity.', icon: 'zap', type: 'warn', time: '5m ago' },
+  { id: 'n3', title: 'New Event', desc: 'Physics 101 starts in 15 minutes at LHC.', icon: 'calendar', type: 'event', time: '12m ago' },
+  { id: 'n4', title: 'Security Alert', desc: 'Main gate entry rules updated for guests.', icon: 'shield-alert', type: 'danger', time: '1h ago' }
 ];
