@@ -13,8 +13,7 @@
         menuBtn = $('#menuBtn'), closeMenuBtn = $('#closeMenuBtn'),
         sideMenu = $('#sideMenu'), sideMenuOverlay = $('#sideMenuOverlay'),
         bottomSheet = $('#bottomSheet'), sheetHandle = $('#sheetHandle'),
-        accessibilityBtn = $('#accessibilityBtn'), accessibilityMenu = $('#accessibilityMenu'),
-        eventBanner = $('#eventBanner'), eventClose = $('#eventClose'), eventAction = $('#eventAction');
+        accessibilityBtn = $('#accessibilityBtn'), accessibilityMenu = $('#accessibilityMenu');
 
     const sheetTabs = $$('.sheet-tab');
     const tabContents = { explore: $('#exploreTab'), navigate: $('#navigateTab'), events: $('#eventsTab') };
@@ -228,9 +227,6 @@
     accessibilityBtn.addEventListener('click', () => accessibilityMenu.classList.toggle('active'));
     document.addEventListener('click', e => { if (!e.target.closest('.accessibility-fab')) accessibilityMenu.classList.remove('active'); });
 
-    // ─── EVENT BANNER ───
-    eventClose.addEventListener('click', () => eventBanner.classList.add('hidden'));
-    eventAction.addEventListener('click', () => { window.__navigateTo('phy-lab'); eventBanner.classList.add('hidden'); });
 
     function openMarkerPopup(id) { 
         const loc = LOCATIONS.find(l => l.id === id); 
@@ -411,7 +407,7 @@
     const settingHandlers = {
         settingDarkMode: v => applyTheme(v),
         settingAnimations: v => { settings.animations = v; document.body.style.setProperty('--transition-fast', v ? '0.18s cubic-bezier(0.4,0,0.2,1)' : '0s'); document.body.style.setProperty('--transition-smooth', v ? '0.35s cubic-bezier(0.4,0,0.2,1)' : '0s'); },
-        settingNotifications: v => { settings.notifications = v; if (!v) eventBanner.classList.add('hidden'); },
+        settingNotifications: v => { settings.notifications = v; },
         settingOccupancy: v => { settings.occupancy = v; },
         settingRouteHistory: v => { settings.routeHistory = v; }
     };
@@ -617,7 +613,7 @@
               nClose = $('#closeNotifications'), nDot = $('.notification-dot'),
               nList = $('#notificationList'), nClear = $('#clearNotifications');
 
-        let notifications = [...MOCK_NOTIFICATIONS];
+        let notifications = userRole === 'guest' ? [...GUEST_NOTIFICATIONS] : [...MOCK_NOTIFICATIONS];
 
         function renderNotifications() {
             if (!nList) return;
@@ -631,9 +627,12 @@
                 return;
             }
             
+            // Color-code notification icons by type
+            const typeColors = { info: 'var(--clr-primary)', warn: '#f59e0b', event: '#10b981', danger: '#ef4444' };
+            
             nList.innerHTML = notifications.map(n => `
                 <li class="notification-item" data-id="${n.id}">
-                    <i data-lucide="${n.icon}"></i>
+                    <i data-lucide="${n.icon}" style="color: ${typeColors[n.type] || 'var(--clr-primary)'}"></i>
                     <div>
                         <p><strong>${n.title}</strong></p>
                         <p class="text-xs">${n.desc}</p>
@@ -685,9 +684,12 @@
             }
         });
 
-        // Simulating a "Welcome" notification on first arrival
+        // Welcome notification on first arrival
         if (!localStorage.getItem('cn_init_visited')) {
-            showToast('Welcome to Smart Campus! 🎓');
+            const welcomeMsg = userRole === 'guest' 
+                ? 'Welcome, Guest! 👋 Carry a valid ID for campus entry.' 
+                : 'Welcome to Smart Campus! 🎓';
+            showToast(welcomeMsg);
             setTimeout(() => {
                 if (nDot) nDot.style.display = 'block';
             }, 3000);
@@ -711,7 +713,6 @@
         populateSuggestions();
         lucide.createIcons();
         setInterval(simulateOccupancy, 8000);
-        setTimeout(() => { if (settings.notifications) eventBanner.style.animation = 'slideDown 0.5s ease-out forwards'; }, 1500);
     }
 
     document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init) : init();

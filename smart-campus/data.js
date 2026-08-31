@@ -176,6 +176,14 @@ const IMPORTANT_ROUTES = [
 const MOCK_NOTIFICATIONS = [
   { id: 'n1', title: 'Welcome back!', desc: 'Explore the new realistic map graphics.', icon: 'info', type: 'info', time: 'Just now' },
   { id: 'n2', title: 'Occupancy Update', desc: 'LHC is currently at 85% capacity.', icon: 'zap', type: 'warn', time: '5m ago' },
-  { id: 'n3', title: 'New Event', desc: 'Physics 101 starts in 15 minutes at LHC.', icon: 'calendar', type: 'event', time: '12m ago' },
   { id: 'n4', title: 'Security Alert', desc: 'Main gate entry rules updated for guests.', icon: 'shield-alert', type: 'danger', time: '1h ago' }
+];
+
+const GUEST_NOTIFICATIONS = [
+  { id: 'gn1', title: 'Welcome, Guest! 👋', desc: 'You are browsing as a visitor. Some features are limited.', icon: 'info', type: 'info', time: 'Just now' },
+  { id: 'gn2', title: 'Visitor Entry', desc: 'Please carry a valid Govt. ID for campus entry at the Main Gate.', icon: 'shield-check', type: 'warn', time: '2m ago' },
+  { id: 'gn3', title: 'Guest Parking', desc: 'Paid visitor parking is available near the Main Gate.', icon: 'car', type: 'info', time: '5m ago' },
+  { id: 'gn4', title: 'Guest House', desc: 'Book accommodation at the Main Guest House. Contact reception for availability.', icon: 'home', type: 'info', time: '10m ago' },
+  { id: 'gn5', title: 'Campus Tours', desc: 'Guided campus tours start at 10 AM and 3 PM daily from the Main Gate.', icon: 'map', type: 'event', time: '30m ago' },
+  { id: 'gn6', title: 'Emergency Help', desc: 'Dial 011-2659-6666 for medical emergencies. Security: 011-2659-1000.', icon: 'phone-call', type: 'danger', time: '1h ago' }
 ];

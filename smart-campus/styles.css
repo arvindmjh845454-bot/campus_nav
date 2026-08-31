@@ -237,6 +237,11 @@ input {
   to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes pulse-red {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.7; }
+}
+
 /* Custom marker styling */
 .custom-marker {
   display: flex;
@@ -596,112 +601,7 @@ input {
   cursor: pointer;
 }
 
-/* ---------- EVENT BANNER ---------- */
-.event-banner {
-  position: fixed;
-  top: 120px;
-  left: var(--space-md);
-  right: var(--space-md);
-  z-index: 997;
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  background: var(--bg-glass);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  border: 1px solid var(--border-glass);
-  border-left: 3px solid var(--clr-accent);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  animation: slideDown 0.4s ease-out;
-  transition: opacity var(--transition-smooth), transform var(--transition-smooth);
-}
 
-.event-banner.hidden {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-}
-
-.event-banner__icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--clr-accent), #34d399);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.event-banner__icon svg {
-  width: 20px;
-  height: 20px;
-  color: #fff;
-}
-
-.event-banner__content {
-  flex: 1;
-  min-width: 0;
-}
-
-.event-banner__title {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.event-banner__sub {
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-
-.event-banner__action {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 14px;
-  border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--clr-accent), #34d399);
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 600;
-  flex-shrink: 0;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.event-banner__action:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 16px var(--clr-accent-glow);
-}
-
-.event-banner__action svg {
-  width: 14px;
-  height: 14px;
-}
-
-.event-banner__close {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-full);
-  color: var(--text-muted);
-  transition: color var(--transition-fast), background var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.event-banner__close:hover {
-  color: var(--text-primary);
-  background: var(--bg-glass-hover);
-}
-
-.event-banner__close svg {
-  width: 16px;
-  height: 16px;
-}
 
 /* ---------- BOTTOM SHEET ---------- */
 .bottom-sheet {
@@ -1579,11 +1479,6 @@ input {
     right: 410px;
   }
 
-  .event-banner {
-    left: auto;
-    right: var(--space-md);
-    width: 380px;
-  }
 
   .place-grid {
     grid-template-columns: repeat(3, 1fr);

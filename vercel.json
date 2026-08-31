@@ -1,0 +1,12 @@
+{
+  "outputDirectory": "Portfolio",
+  "rewrites": [
+    { 
+      "source": "/(.*)", 
+      "destination": "/index.html" 
+    }
+  ]
+}
+
+
+   
